@@ -6,9 +6,7 @@ import { useGetCharacterByID } from 'hooks';
 
 const CharacterPage: NextPage = () => {
   const router = useRouter();
-  console.log(router.query.id);
   const { data, loading } = useGetCharacterByID({ id: router?.query?.id });
-  console.log(data, loading);
   return (
     <div>
       {loading ? (
@@ -27,7 +25,6 @@ const CharacterPage: NextPage = () => {
                   height={350}
                 />
               </div>
-              {data.character.status}
               {data.character.gender}
             </div>
           )}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import type { NextPage } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -13,17 +13,48 @@ type CharecterType = {
 };
 
 const Home: NextPage = () => {
-  const { data, loading, error } = useGetCharacters();
-  console.log(data, loading, error);
+  const [searchText, setSearchText] = useState('');
+  const { getCharacters, data, loading } = useGetCharacters();
+
+  useEffect(() => {
+    getCharacters({ variables: { name: searchText } });
+  }, []);
+
   return (
-    <div className={styles.container}>
-      {loading && 'Loading...'}
-      {data?.characters.results.map((character: CharecterType) => (
-        <div key={character.id}>
-          <Link href={`/character/${character.id}`}>{character.name}</Link>
-          <Image width={350} height={350} src={character.image} alt={character.name} />
+    <div>
+      {loading ? (
+        <div className={styles.loading}>Loading...</div>
+      ) : (
+        <div className={styles.container}>
+          <h1>Wubba Lubba Dub Dub!</h1>
+          <div>
+            <input onChange={(e) => setSearchText(e.target.value)} />
+            <button onClick={() => getCharacters({ variables: { name: searchText } })}>
+              Search
+            </button>
+          </div>
+          <div className={styles.wrapper}>
+            {data?.characters.results.map((character: CharecterType) => (
+              <div key={character.id} className={styles.character}>
+                <Link href={`/character/${character.id}`} passHref>
+                  <div>
+                    {character.name}
+                    <div className={styles['image-wrapper']}>
+                      <Image
+                        width={350}
+                        height={350}
+                        src={character.image}
+                        alt={character.name}
+                        className={styles.image}
+                      />
+                    </div>
+                  </div>
+                </Link>
+              </div>
+            ))}
+          </div>
         </div>
-      ))}
+      )}
     </div>
   );
 };
